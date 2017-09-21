@@ -28,6 +28,7 @@ public class Menu {
 	public BigDecimal getDecimalFromUser(String message) {
 		BigDecimal inputtedDecimal = null;
 		out.println(message);
+		out.flush();
 		do {
 			try {
 				String userInput = in.nextLine();
