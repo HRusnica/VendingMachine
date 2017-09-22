@@ -2,54 +2,77 @@ package com.techelevator;
 
 import static org.junit.Assert.*;
 
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.util.Stack;
 
-import org.junit.After;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 import org.junit.Before;
 import org.junit.Test;
 
 public class VendingMachineTest {
 VendingMachine sut;
+
 	@Before
 	public void setUp() throws Exception {
-		sut = new VendingMachine();
+		Stack<Products> sutStack = new Stack<Products>();
+		sutStack.push(new Chips("Funyuns", new BigDecimal("1.00")));
+		sutStack.push(new Chips("Funyuns", new BigDecimal("1.00")));
+		sutStack.push(new Chips("Funyuns", new BigDecimal("1.00")));
+		sutStack.push(new Chips("Funyuns", new BigDecimal("1.00")));
+		sutStack.push(new Chips("Funyuns", new BigDecimal("1.00")));
+		Map<String, Stack<Products>> sutMap = new HashMap<>();
+		sutMap.put("A1",sutStack);
+		sut = new VendingMachine(sutMap);
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@Test
+	public void testFeedMoney(){
+		sut.feedMoney(new BigDecimal("100.00"));
+		assertEquals(sut.getCurrentBalance(), new BigDecimal("100.00"));
+		//feedMoney will only receive one of four values
 	}
-// *********** These tests have to be performed with ProductStacker turned to public *****************
-//	@Test
-//	public void testFiveInNewStack() { 
-//		String[] productInfoArray = new String[3];
-//		productInfoArray[0] = "A1";
-//		productInfoArray[1] = "bubbleGum";
-//		productInfoArray[2] = "1.23";
-//		Stack<Products> prods = VendingMachine.productStacker(productInfoArray);
-//		assertEquals(5, prods.size());
-//	}
-//	
-//	@Test
-//	public void testProductStackerPrice() {
-//		String[] productInfoArray = new String[3];
-//		productInfoArray[0] = "A1";
-//		productInfoArray[1] = "bubbleGum";
-//		productInfoArray[2] = "1.23";
-//		Stack<Products> prods = VendingMachine.productStacker(productInfoArray);
-//		assertEquals(new BigDecimal(productInfoArray[2]), prods.peek().getPrice());
-//	}
-//	
-//	@Test
-//	public void testProductStackerName() {
-//		String[] productInfoArray = new String[3];
-//		productInfoArray[0] = "A1";
-//		productInfoArray[1] = "bubbleGum";
-//		productInfoArray[2] = "1.23";
-//		Stack<Products> prods = VendingMachine.productStacker(productInfoArray);
-//		assertEquals(productInfoArray[1], prods.peek().getName());
-//	}
+	
+	@Test
+	public void testSelectProductInvalidCode(){
+		int i = 0;
+		try{
+			sut.selectProduct("B2");
+		}catch(Exception e){
+			i = 1;
+		}
+		assertEquals(1 , i);
+	}
 
-
+	@Test
+	public void testSelectProductSoldOut(){
+		int i = 0;
+		sut.feedMoney(new BigDecimal("100.00"));
+		for(int j = 0; j < 6; j++){
+			try{
+				sut.selectProduct("A1");
+			}catch(Exception e){
+				i = 1;
+			}
+		}
+		assertEquals(1 , i);
+	}	
+	
+	@Test
+	public void testSelectProductNotEnoughMoney(){
+		int i = 0;
+		try{
+			sut.selectProduct("A1");
+		}catch(Exception e){
+			i = 1;
+		}
+		assertEquals(1 , i);
+	}
+	
+	@Test
+	public void testFinishTransaction(){
+		sut.feedMoney(new BigDecimal("1.00"));
+		sut.finishTransaction();
+		assertEquals(sut.getCurrentBalance(),new BigDecimal("0.00"));
+	}
 }

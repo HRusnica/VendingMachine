@@ -24,7 +24,9 @@ public class Menu {
 		}
 		return choice;
 	}
-
+	
+	
+// We would delete this, but Joe pressured us
 	public BigDecimal getDecimalFromUser(String message) {
 		BigDecimal inputtedDecimal = null;
 		out.println(message);
